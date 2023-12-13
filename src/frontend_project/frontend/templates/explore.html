@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 clas="mt-5">{% block title %}Explore{% endblock %}</h1>
+<p class="lead">Click the button to view a copy of our latest report.</p>
+<div class="container">
+    <p>
+        <a href="{{ url_for('.static', filename='reports/report.html') }}" class="btn btn-primary my-2">Read the Report</a>
+    </p>
+</div>
+{% endblock %}

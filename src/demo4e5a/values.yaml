@@ -1,0 +1,35 @@
+frontend:
+  enabled: true
+  name: frontend4e5a
+  nodeSelector: 
+    role: usernp1
+  image: 
+    repository: acr7c02.azurecr.io/frontend
+    pullPolicy: IfNotPresent  
+    tag: "0.0.4"
+  applicationPrefix: "/cardiology"
+  applicationName: "Cardiology"
+  signinUri: "https://$host/auth/cardiology/start?rd=$escaped_request_uri"
+  authUri: "https://$host/auth/cardiology/auth"
+
+backend:
+  enabled: true
+  name: backend4e5a
+  schedule: "*/10 * * * *"
+  nodeSelector: 
+    role: usernp2
+  image: 
+    repository: acr7c02.azurecr.io/backend
+    pullPolicy: IfNotPresent  
+    tag: "0.0.4"
+
+persistentVolumeClaim:
+  enabled: true
+  name: claim4e5a
+
+persistentVolume:
+  enabled: true
+  name: store7c02ac-c02
+  azureResourceGroup: 2023-12-04-RG-01
+  azureStorageAccount: store7c02a
+  azureBlobContainer: container01

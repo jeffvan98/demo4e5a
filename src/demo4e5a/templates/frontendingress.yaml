@@ -1,0 +1,32 @@
+{{- if .Values.frontend.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+   name: {{ .Values.frontend.name }}
+   annotations:
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: "{{ .Values.frontend.applicationPrefix }}/$2"
+      nginx.ingress.kubernetes.io/auth-response-headers: X-Auth-Request-Email
+      nginx.ingress.kubernetes.io/auth-signin: {{ .Values.frontend.signinUri }}
+      nginx.ingress.kubernetes.io/auth-url: {{ .Values.frontend.authUri }}
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+         auth_request_set $name_upstream_1 $upstream_cookie__oauth2_proxy_1;
+
+         access_by_lua_block {
+            if ngx.var.name_upstream_1 ~= "" then
+               ngx.header["Set-Cookie"] = "_oauth2_proxy_1=" .. ngx.var.name_upstream_1 .. ngx.var.auth_cookie:match("(; .*)")
+            end
+         }
+spec:
+   ingressClassName: nginx
+   rules:
+   - http:
+        paths:
+        - path: "{{ .Values.frontend.applicationPrefix }}(/|$)(.*)"
+          pathType: ImplementationSpecific
+          backend:
+             service:
+                name: {{ .Values.frontend.name }}
+                port:
+                   number: 5002         
+{{- end -}}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: demo4e5a
+description: Demo application comprised of a cronjob designed to write data to a shared volume and a service designed to present that data
+type: application
+version: 0.0.1
+appVersion: "0.0.3"

@@ -1,0 +1,30 @@
+{{- if .Values.backend.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.backend.name }}
+spec:
+  schedule: "{{ .Values.backend.schedule }}"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- with .Values.backend.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          restartPolicy: Never
+          containers:
+            - name: {{ .Values.backend.name }}
+              image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+              volumeMounts:
+              - name: storage
+                mountPath: "/app/data"
+                readOnly: false
+          volumes:
+          - name: storage
+            persistentVolumeClaim:
+              claimName:  {{ .Values.persistentVolumeClaim.name }}
+{{- end -}}       
